@@ -1,0 +1,4 @@
+FROM python:3.9
+RUN apt-get update && apt-get install ffmpeg -y && rm -rf /var/lib/apt/lists/*
+RUN pip install git+https://github.com/openai/whisper.git
+

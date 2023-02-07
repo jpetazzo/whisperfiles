@@ -1,0 +1,16 @@
+FROM alpine AS ffmpeg
+WORKDIR /ffmpeg
+RUN apk add curl
+RUN curl -fsSL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
+    | tar x -J --strip-components=1
+
+FROM python:3.9 AS builder
+ARG PYTORCH_PACKAGES=cpu
+RUN python -m venv /venv
+RUN /venv/bin/pip install torch --extra-index-url https://download.pytorch.org/whl/$PYTORCH_PACKAGES
+RUN /venv/bin/pip install git+https://github.com/openai/whisper.git
+
+FROM python:3.9-slim AS runner
+COPY --from=ffmpeg /ffmpeg/ffmpeg /usr/local/bin/ffmpeg
+COPY --from=builder /venv/ /venv/
+RUN ln -s /venv/bin/whisper /usr/local/bin/whisper

@@ -1,0 +1,6 @@
+FROM python:3.9
+ARG PYTORCH_PACKAGES=cpu
+RUN apt-get update && apt-get install ffmpeg -y && rm -rf /var/lib/apt/lists/*
+RUN pip install torch --extra-index-url https://download.pytorch.org/whl/$PYTORCH_PACKAGES
+RUN pip install git+https://github.com/openai/whisper.git
+

@@ -1,0 +1,12 @@
+# Note: this one Dockerfile doesn't work, because pytorch doesn't have
+# musl pre-built wheels (yet), and pytorch doesn't build out of the box
+# on musl (yet). It's here just as a curiosity; perhaps it'll work at
+# some point in the future.
+FROM python:3.9-alpine
+RUN apk add build-base cargo ffmpeg git openssl-dev rust # cmake
+ENV USE_GLOO=0
+RUN git clone --recursive https://github.com/pytorch/pytorch
+WORKDIR pytorch
+RUN python setup.py install
+RUN pip install git+https://github.com/openai/whisper.git
+
